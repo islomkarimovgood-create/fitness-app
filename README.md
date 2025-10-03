@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>FitGenius - Персональный тренер</title>
+    <title>FitGenius Pro - 30-дневная трансформация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -9,426 +10,448 @@
             box-sizing: border-box;
         }
         
-        body { 
-            font-family: 'Arial', sans-serif; 
-            max-width: 400px; 
-            margin: 0 auto; 
-            padding: 20px; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        :root {
+            --primary: #4ECDC4;
+            --secondary: #FF6B6B;
+            --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255,255,255,0.12);
+            --text: white;
+        }
+        
+        .dark-theme {
+            --background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --card-bg: rgba(255,255,255,0.08);
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--background);
+            color: var(--text);
             min-height: 100vh;
+            background-attachment: fixed;
+            transition: all 0.3s ease;
         }
         
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-top: 20px;
+        .theme-toggle {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: var(--card-bg);
+            border: none;
+            color: var(--text);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
         }
         
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
+        .navbar {
+            background: rgba(0,0,0,0.95);
+            padding: 18px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
         }
         
-        .header h1 {
-            color: #333;
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+        }
+        
+        .logo {
+            font-family: 'Montserrat', sans-serif;
             font-size: 28px;
-            margin-bottom: 5px;
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        .header p {
-            color: #666;
-            font-size: 14px;
+        .container {
+            max-width: 1200px;
+            margin: 90px auto 0;
+            padding: 40px 25px;
+            min-height: calc(100vh - 90px);
         }
-        
-        .subscription { 
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 25px; 
-            border-radius: 15px; 
-            margin: 20px 0; 
-            color: white;
-            text-align: center;
-        }
-        
-        .subscription h3 {
-            font-size: 20px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        button { 
-            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
-            color: white; 
-            padding: 15px; 
-            border: none; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            margin: 8px 0;
-            width: 100%;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-        
-        .premium { 
-            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-        }
-        
-        .premium:hover {
-            background: linear-gradient(135deg, #FF8E53 0%, #FF6B6B 100%);
-        }
-        
-        .status { 
-            padding: 15px; 
-            border-radius: 10px; 
-            margin: 15px 0; 
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        .active { 
-            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
-            color: #2d6a4f;
-            border: 2px solid #74c69d;
-        }
-        
-        .expired { 
-            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
-            color: #9d0208;
-            border: 2px solid #e63946;
-        }
-        
-        .workout-card {
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-            border-radius: 15px;
+
+        /* Таймер для упражнений */
+        .timer-container {
+            background: var(--card-bg);
             padding: 20px;
-            margin: 15px 0;
-            border: 2px solid #90e0ef;
-        }
-        
-        .workout-card h3 {
-            color: #03045e;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .progress-bar {
-            background: #e9ecef;
-            border-radius: 10px;
-            height: 10px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-around;
+            border-radius: 15px;
             margin: 20px 0;
             text-align: center;
         }
         
-        .stat-item {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            flex: 1;
-            margin: 0 5px;
-        }
-        
-        .stat-number {
-            font-size: 24px;
+        .timer {
+            font-size: 48px;
             font-weight: bold;
-            color: #4ECDC4;
+            font-family: 'Montserrat', sans-serif;
+            margin: 20px 0;
         }
         
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
+        .timer-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Прогресс фотографии */
+        .photo-progress {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
         }
         
-        @media (max-width: 480px) {
-            body { 
-                max-width: 100%; 
-                padding: 15px; 
-            }
-            .container {
-                padding: 20px;
-            }
-            button { 
-                font-size: 16px;
-                padding: 18px;
-            }
+        .photo-upload {
+            border: 2px dashed var(--primary);
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 10px 0;
+            cursor: pointer;
         }
         
-        .pulse {
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .photo-item {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        /* Мотивационные уведомления */
+        .motivation-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
             animation: pulse 2s infinite;
         }
+
+        /* Водный режим */
+        .water-tracker {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
         
+        .water-cups {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .water-cup {
+            width: 40px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 0 0 10px 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .water-cup.filled {
+            background: #3498db;
+        }
+
+        /* Остальные стили остаются как были */
+        .feature-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        
-        .icon {
-            font-size: 20px;
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+                margin-top: 80px;
+            }
+            
+            .theme-toggle {
+                top: 80px;
+                right: 15px;
+            }
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🏋️ FitGenius Pro</div>
+            <div class="nav-links">
+                <a href="#" onclick="showPage('home')">Главная</a>
+                <a href="#" onclick="showPage('program')">Тренировки</a>
+                <a href="#" onclick="showPage('nutrition')">Питание</a>
+                <a href="#" onclick="showPage('progress')">Прогресс</a>
+                <a href="#" onclick="showPage('community')">Сообщество</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <div class="header">
-            <h1>🏋️ FitGenius Pro</h1>
-            <p>Твой персональный тренер с AI</p>
+        <!-- Главная страница -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>30-дневная трансформация</h1>
+                <p>Новые функции: таймеры, прогресс фото, водный режим!</p>
+                <button class="cta-button" onclick="showPage('program')">Начать трансформацию</button>
+            </div>
+
+            <div class="motivation-card">
+                <h3>💪 Ты сможешь!</h3>
+                <p>Сегодняшняя тренировка изменит твое завтра</p>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalWorkouts">0</div>
+                    <div class="stat-label">Завершено тренировок</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="waterCount">0/8</div>
+                    <div class="stat-label">Стаканов воды</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="currentStreak">0</div>
+                    <div class="stat-label">Дней подряд</div>
+                </div>
+            </div>
         </div>
-        
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number" id="workoutsCount">0</div>
-                <div class="stat-label">Тренировок</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="daysLeft">30</div>
-                <div class="stat-label">Дней осталось</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="level">1</div>
-                <div class="stat-label">Уровень</div>
-            </div>
-        </div>
-        
-        <div id="userStatus" class="status"></div>
-        <div id="workoutPlan"></div>
-        
-        <div class="subscription pulse">
-            <h3>💎 Премиум подписка</h3>
-            <p>Пробный период: 30 дней бесплатно!</p>
-            <div class="progress-bar">
-                <div class="progress-fill" id="trialProgress" style="width: 0%"></div>
-            </div>
+
+        <!-- Тренировки с таймером -->
+        <div id="program" class="page">
+            <h1>💪 Тренировки + Таймер</h1>
             
-            <button onclick="startTrial()">🎁 Начать пробный месяц</button>
-            <button onclick="generateWorkout()">📋 Сгенерировать тренировку</button>
-            <button onclick="generateCustomWorkout()">🎯 Персональная тренировка</button>
-            <button onclick="saveProgress()">✅ Завершить тренировку</button>
-            <button onclick="subscribe()" class="premium">💳 Оформить подписку - 299₽/мес</button>
+            <div class="timer-container">
+                <h3>⏱️ Таймер упражнений</h3>
+                <div class="timer" id="exerciseTimer">00:30</div>
+                <button class="timer-btn" onclick="startTimer()">Старт</button>
+                <button class="timer-btn" onclick="pauseTimer()">Пауза</button>
+                <button class="timer-btn" onclick="resetTimer()">Сброс</button>
+            </div>
+
+            <!-- Остальной код тренировок -->
         </div>
+
+        <!-- Новый раздел - Сообщество -->
+        <div id="community" class="page">
+            <h1>👥 Фитнес Сообщество</h1>
+            
+            <div class="feature-card">
+                <h3>📸 Мой прогресс в фото</h3>
+                <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                    <p>📷 Нажми чтобы добавить фото прогресса</p>
+                    <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+                </div>
+                <div class="photo-grid" id="photoGrid"></div>
+            </div>
+
+            <div class="water-tracker">
+                <h3>💧 Водный режим</h3>
+                <p>Выпито стаканов: <span id="waterDisplay">0</span>/8</p>
+                <div class="water-cups" id="waterCups"></div>
+                <button class="cta-button" onclick="resetWater()">Сбросить на день</button>
+            </div>
+
+            <div class="feature-card">
+                <h3>🏆 Достижения</h3>
+                <div id="achievementsList"></div>
+            </div>
+        </div>
+
+        <!-- Остальные страницы (Питание, Прогресс) -->
     </div>
 
     <script>
-        function startTrial() {
-            const trialData = {
-                startDate: new Date().toISOString(),
-                endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                used: true
-            };
-            localStorage.setItem('fitnessTrial', JSON.stringify(trialData));
-            
-            // Устанавливаем счетчик тренировок
-            localStorage.setItem('workoutsCompleted', '0');
-            localStorage.setItem('userLevel', '1');
-            
-            showNotification('🎉 Пробный месяц активирован! Теперь ты можешь получать планы тренировок!', 'success');
-            updateStatus();
-            updateStats();
+        // Новые функции
+        let isDarkTheme = false;
+        let timerInterval;
+        let timerSeconds = 30;
+        let waterCount = 0;
+        let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
+
+        // Переключение темы
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle('dark-theme');
+            document.querySelector('.theme-toggle').textContent = isDarkTheme ? '☀️' : '🌙';
         }
 
-        function subscribe() {
-            showNotification('💳 Премиум функции скоро будут доступны! Следи за обновлениями!', 'info');
-        }
-
-        function generateWorkout() {
-            const trialData = JSON.parse(localStorage.getItem('fitnessTrial'));
-            const workoutPlan = document.getElementById('workoutPlan');
-            
-            if (!trialData || !trialData.used) {
-                showNotification('❌ Сначала активируй пробный период!', 'error');
-                return;
-            }
-
-            const endDate = new Date(trialData.endDate);
-            const now = new Date();
-
-            if (now > endDate) {
-                workoutPlan.innerHTML = '<div class="status expired">❌ Пробный период закончился. Оформи подписку!</div>';
-                return;
-            }
-
-            const workouts = [
-                {
-                    title: "💪 Силовая тренировка",
-                    exercises: "• Приседания: 4х12<br>• Жим лежа: 4х10<br>• Тяга штанги: 4х10<br>• Планка: 3х60 сек<br>• Подъемы на бицепс: 3х12",
-                    calories: "🔥 450-550 ккал"
-                },
-                {
-                    title: "🔥 Кардио тренировка", 
-                    exercises: "• Берпи: 5х10<br>• Прыжки на скакалке: 5х50<br>• Бег на месте: 5х2 мин<br>• Альпинист: 4х30 сек<br>• Прыжки в планке: 4х20",
-                    calories: "🔥 500-600 ккал"
-                },
-                {
-                    title: "🏃 ВИИТ тренировка",
-                    exercises: "• Спринты: 10х30 сек<br>• Отжимания: 4х15<br>• Приседания с прыжком: 4х15<br>• Скручивания: 4х20<br>• Бёрпи: 4х12",
-                    calories: "🔥 550-650 ккал"
-                },
-                {
-                    title: "🧘 Функциональная тренировка",
-                    exercises: "• Выпады: 4х12 на ногу<br>• Подтягивания: 4х8<br>• Пресс: 4х25<br>• Бёрпи: 4х10<br>• Планка-паук: 3х10",
-                    calories: "🔥 400-500 ккал"
+        // Таймер упражнений
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert('⏰ Время вышло! Отличная работа!');
                 }
-            ];
-
-            const randomWorkout = workouts[Math.floor(Math.random() * workouts.length)];
-            const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-
-            workoutPlan.innerHTML = `
-                <div class="workout-card">
-                    <h3>${randomWorkout.title}</h3>
-                    <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 10px; margin: 10px 0;">
-                        ${randomWorkout.exercises}
-                    </div>
-                    <div style="text-align: center; color: #03045e; font-weight: bold; margin: 10px 0;">
-                        ${randomWorkout.calories}
-                    </div>
-                    <p style="text-align: center; color: #666; font-size: 12px; margin-top: 10px;">
-                        ⭐ Пробная версия • Осталось ${daysLeft} дней
-                    </p>
-                </div>
-            `;
+            }, 1000);
         }
 
-        function generateCustomWorkout() {
-            const trialData = JSON.parse(localStorage.getItem('fitnessTrial'));
-            
-            if (!trialData || !trialData.used) {
-                showNotification('❌ Сначала активируй пробный период!', 'error');
-                return;
-            }
-
-            const level = prompt("🏆 Выбери уровень:\n1 - Начинающий 👶\n2 - Средний 💪\n3 - Продвинутый 🦍");
-            const goal = prompt("🎯 Выбери цель:\n1 - Похудение 🏃\n2 - Набор массы 🏋️\n3 - Поддержание формы ✅");
-            
-            let workout = "";
-            let title = "";
-            let calories = "";
-
-            if (level == "1") {
-                title = "💪 Начинающий уровень";
-                workout = "• Приседания: 3х15<br>• Отжимания с колен: 3х10<br>• Планка: 3х30 сек<br>• Скручивания: 3х15<br>• Подъемы ног: 3х12";
-                calories = "🔥 300-400 ккал";
-            } else if (level == "2") {
-                title = "🔥 Средний уровень";
-                workout = "• Берпи: 4х10<br>• Подтягивания: 3х8<br>• Выпады: 4х12<br>• Пресс: 4х20<br>• Отжимания: 4х12";
-                calories = "🔥 450-550 ккал";
-            } else {
-                title = "🚀 Продвинутый уровень";
-                workout = "• Становая тяга: 4х8<br>• Жим штанги: 4х6<br>• Подтягивания с весом: 4х6<br>• Кардио: 20 мин<br>• Бёрпи: 5х15";
-                calories = "🔥 600-700 ккал";
-            }
-            
-            document.getElementById('workoutPlan').innerHTML = `
-                <div class="workout-card">
-                    <h3>${title}</h3>
-                    <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 10px; margin: 10px 0;">
-                        ${workout}
-                    </div>
-                    <div style="text-align: center; color: #03045e; font-weight: bold; margin: 10px 0;">
-                        ${calories}
-                    </div>
-                    <p style="text-align: center; color: #666; font-size: 12px;">
-                        🎯 Персональная программа • Подходит для твоих целей
-                    </p>
-                </div>
-            `;
+        function pauseTimer() {
+            clearInterval(timerInterval);
         }
 
-        function saveProgress() {
-            const currentWorkouts = parseInt(localStorage.getItem('workoutsCompleted') || 0);
-            const newWorkouts = currentWorkouts + 1;
-            
-            localStorage.setItem('workoutsCompleted', newWorkouts.toString());
-            
-            // Повышаем уровень каждые 5 тренировок
-            let userLevel = Math.floor(newWorkouts / 5) + 1;
-            if (userLevel > 3) userLevel = 3;
-            localStorage.setItem('userLevel', userLevel.toString());
-            
-            showNotification(`🎊 Отлично! Ты завершил ${newWorkouts} тренировок! Твой уровень: ${userLevel}`, 'success');
-            updateStats();
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerSeconds = 30;
+            updateTimerDisplay();
         }
 
-        function updateStatus() {
-            const statusElement = document.getElementById('userStatus');
-            const trialData = JSON.parse(localStorage.getItem('fitnessTrial'));
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('exerciseTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Водный режим
+        function initWaterTracker() {
+            const waterCups = document.getElementById('waterCups');
+            waterCups.innerHTML = '';
+            waterCount = parseInt(localStorage.getItem('waterCount')) || 0;
             
-            if (!trialData || !trialData.used) {
-                statusElement.innerHTML = '<div class="status expired">❌ Пробный период не активирован</div>';
-                return;
+            for (let i = 0; i < 8; i++) {
+                const cup = document.createElement('div');
+                cup.className = `water-cup ${i < waterCount ? 'filled' : ''}`;
+                cup.onclick = () => drinkWater(i);
+                waterCups.appendChild(cup);
             }
+            updateWaterDisplay();
+        }
 
-            const endDate = new Date(trialData.endDate);
-            const now = new Date();
-            const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-            const totalDays = 30;
-            const progress = ((totalDays - daysLeft) / totalDays) * 100;
-
-            document.getElementById('trialProgress').style.width = progress + '%';
-
-            if (now > endDate) {
-                statusElement.innerHTML = '<div class="status expired">❌ Пробный период закончился</div>';
-            } else {
-                statusElement.innerHTML = `<div class="status active">✅ Пробный период активен • Осталось ${daysLeft} дней</div>`;
+        function drinkWater(cupIndex) {
+            if (cupIndex === waterCount) {
+                waterCount++;
+                localStorage.setItem('waterCount', waterCount);
+                initWaterTracker();
+                
+                if (waterCount === 8) {
+                    unlockAchievement('waterMaster');
+                }
             }
         }
 
-        function updateStats() {
-            const workoutsCompleted = parseInt(localStorage.getItem('workoutsCompleted') || 0);
-            const userLevel = parseInt(localStorage.getItem('userLevel') || 1);
+        function resetWater() {
+            waterCount = 0;
+            localStorage.setItem('waterCount', waterCount);
+            initWaterTracker();
+        }
+
+        function updateWaterDisplay() {
+            document.getElementById('waterDisplay').textContent = waterCount;
+            document.getElementById('waterCount').textContent = `${waterCount}/8`;
+        }
+
+        // Система достижений
+        function unlockAchievement(achievementId) {
+            const achievement = {
+                id: achievementId,
+                date: new Date().toISOString(),
+                unlocked: true
+            };
             
-            const trialData = JSON.parse(localStorage.getItem('fitnessTrial'));
-            let daysLeft = 30;
-            if (trialData && trialData.used) {
-                const endDate = new Date(trialData.endDate);
-                const now = new Date();
-                daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
-                if (daysLeft < 0) daysLeft = 0;
+            if (!achievements.find(a => a.id === achievementId)) {
+                achievements.push(achievement);
+                localStorage.setItem('achievements', JSON.stringify(achievements));
+                showAchievementNotification(achievementId);
             }
+        }
+
+        function showAchievementNotification(achievementId) {
+            const messages = {
+                waterMaster: '💧 Достижение: Водный мастер!',
+                weekComplete: '🏆 Неделя завершена!',
+                monthComplete: '🎉 Месяц завершен!'
+            };
             
-            document.getElementById('workoutsCount').textContent = workoutsCompleted;
-            document.getElementById('daysLeft').textContent = daysLeft;
-            document.getElementById('level').textContent = userLevel;
+            alert(messages[achievementId] || '🎊 Новое достижение!');
         }
 
-        function showNotification(message, type) {
-            alert(message);
+        // Загрузка фото
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photos = JSON.parse(localStorage.getItem('progressPhotos')) || [];
+                    photos.push({
+                        url: e.target.result,
+                        date: new Date().toISOString(),
+                        day: currentDay
+                    });
+                    localStorage.setItem('progressPhotos', JSON.stringify(photos));
+                    loadProgressPhotos();
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
-        // Запускаем при загрузке страницы
-        updateStatus();
-        updateStats();
+        function loadProgressPhotos() {
+            const photos = JSON.parse(localStorage.getItem('progressPhotos')) || [];
+            const grid = document.getElementById('photoGrid');
+            grid.innerHTML = '';
+            
+            photos.forEach(photo => {
+                const img = document.createElement('img');
+                img.src = photo.url;
+                img.className = 'photo-item';
+                grid.appendChild(img);
+            });
+        }
+
+        // Инициализация при загрузке
+        function initNewFeatures() {
+            initWaterTracker();
+            loadProgressPhotos();
+            updateTimerDisplay();
+        }
+
+        // Добавь этот вызов в существующую функцию init()
+        document.addEventListener('DOMContentLoaded', function() {
+            init(); // твоя существующая функция
+            initNewFeatures(); // новые функции
+        });
     </script>
+
+    <!-- Существующий JavaScript код остаётся здесь -->
 </body>
 </html>
